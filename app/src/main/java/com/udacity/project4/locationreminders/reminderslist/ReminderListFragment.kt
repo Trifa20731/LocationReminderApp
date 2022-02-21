@@ -16,6 +16,11 @@ class ReminderListFragment : BaseFragment() {
     //use Koin to retrieve the ViewModel instance
     override val _viewModel: RemindersListViewModel by viewModel()
     private lateinit var binding: FragmentRemindersBinding
+
+
+//------------------------------------- Override Functions -----------------------------------------
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -51,6 +56,10 @@ class ReminderListFragment : BaseFragment() {
         _viewModel.loadReminders()
     }
 
+
+//------------------------------------- Navigation -------------------------------------------------
+
+
     private fun navigateToAddReminder() {
         //use the navigationCommand live data to navigate between the fragments
         _viewModel.navigationCommand.postValue(
@@ -60,6 +69,10 @@ class ReminderListFragment : BaseFragment() {
         )
     }
 
+
+//------------------------------------- Recycler View ----------------------------------------------
+
+
     private fun setupRecyclerView() {
         val adapter = RemindersListAdapter {
         }
@@ -67,6 +80,11 @@ class ReminderListFragment : BaseFragment() {
 //        setup the recycler view using the extension function
         binding.reminderssRecyclerView.setup(adapter)
     }
+
+
+
+//------------------------------------- Menu Functions ---------------------------------------------
+
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
