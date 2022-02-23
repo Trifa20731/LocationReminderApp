@@ -1,18 +1,30 @@
 package com.udacity.project4.locationreminders.reminderslist
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
+import com.firebase.ui.auth.AuthUI
 import com.udacity.project4.R
+import com.udacity.project4.authentication.AuthenticationActivity
+import com.udacity.project4.authentication.AuthenticationState
 import com.udacity.project4.base.BaseFragment
 import com.udacity.project4.base.NavigationCommand
 import com.udacity.project4.databinding.FragmentRemindersBinding
+import com.udacity.project4.locationreminders.RemindersActivity
 import com.udacity.project4.utils.setDisplayHomeAsUpEnabled
 import com.udacity.project4.utils.setTitle
 import com.udacity.project4.utils.setup
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ReminderListFragment : BaseFragment() {
+
+    companion object {
+        const val LOG_TAG_TEST: String = "TestTag"
+    }
+
     //use Koin to retrieve the ViewModel instance
     override val _viewModel: RemindersListViewModel by viewModel()
     private lateinit var binding: FragmentRemindersBinding
@@ -45,9 +57,13 @@ class ReminderListFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = this
         setupRecyclerView()
+        // Set Click Listener for FAB.
         binding.addReminderFAB.setOnClickListener {
+            Log.i(LOG_TAG_TEST, "FAB has been clicked.")
             navigateToAddReminder()
         }
+
+        _viewModel.authenticationState.observe(viewLifecycleOwner, Observer { updateUIAccordingToAuthenticationState(it) })
     }
 
     override fun onResume() {
@@ -67,6 +83,25 @@ class ReminderListFragment : BaseFragment() {
                 ReminderListFragmentDirections.toSaveReminder()
             )
         )
+    }
+
+//------------------------------------- Observer Functions -----------------------------------------
+
+
+    private fun updateUIAccordingToAuthenticationState(state: AuthenticationState) {
+        Log.i(AuthenticationActivity.LOG_TAG, "updateUIAccordingToAuthenticationState: run.")
+        when (state) {
+            AuthenticationState.AUTHENTICATED -> {
+                // Jump to Main Page, if authenticated.
+                Log.i(LOG_TAG_TEST, "The user has authenticated.")
+            }
+            else -> {
+                // Change the UI to remind user to log in.
+                Log.i(LOG_TAG_TEST, "There is no current user.")
+                val intent = Intent(activity, AuthenticationActivity::class.java)
+                startActivity(intent)
+            }
+        }
     }
 
 
@@ -89,7 +124,8 @@ class ReminderListFragment : BaseFragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.logout -> {
-//                TODO: add the logout implementation
+                Log.i(LOG_TAG_TEST, "The logout button has been clicked.")
+                AuthUI.getInstance().signOut(requireContext())
             }
         }
         return super.onOptionsItemSelected(item)

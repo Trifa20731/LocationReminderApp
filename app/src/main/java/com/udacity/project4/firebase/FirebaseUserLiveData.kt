@@ -14,13 +14,18 @@
  * limitations under the License.
  */
 
-package com.udacity.project4.authentication.firebase
+package com.udacity.project4.firebase
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 
 class FirebaseUserLiveData: LiveData<FirebaseUser?>() {
+    companion object {
+        const val LOG_TAG: String = "FirebaseUserLiveData"
+    }
+
     private val firebaseAuth = FirebaseAuth.getInstance()
 
     private val authStateListener = FirebaseAuth.AuthStateListener { firebaseAuth ->
@@ -33,12 +38,14 @@ class FirebaseUserLiveData: LiveData<FirebaseUser?>() {
     // When this object has an active observer, start observing the FirebaseAuth state to see if
     // there is currently a logged in user.
     override fun onActive() {
+        Log.i(LOG_TAG, "onActive run.")
         firebaseAuth.addAuthStateListener(authStateListener)
     }
 
     // When this object no longer has an active observer, stop observing the FirebaseAuth state to
     // prevent memory leaks.
     override fun onInactive() {
+        Log.i(LOG_TAG, "onInactive run.")
         firebaseAuth.removeAuthStateListener(authStateListener)
     }
 }

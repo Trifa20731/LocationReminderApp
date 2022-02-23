@@ -3,6 +3,9 @@ package com.udacity.project4.base
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.map
+import com.udacity.project4.authentication.AuthenticationState
+import com.udacity.project4.firebase.FirebaseUserLiveData
 import com.udacity.project4.utils.SingleLiveEvent
 
 /**
@@ -17,5 +20,4 @@ abstract class BaseViewModel(app: Application) : AndroidViewModel(app) {
     val showToast: SingleLiveEvent<String> = SingleLiveEvent()
     val showLoading: SingleLiveEvent<Boolean> = SingleLiveEvent()
     val showNoData: MutableLiveData<Boolean> = MutableLiveData()
-
 }
