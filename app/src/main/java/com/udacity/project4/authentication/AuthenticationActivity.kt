@@ -12,6 +12,7 @@ import com.firebase.ui.auth.IdpResponse
 import com.google.firebase.auth.FirebaseAuth
 import com.udacity.project4.R
 import com.udacity.project4.databinding.ActivityAuthenticationBinding
+import com.udacity.project4.locationreminders.RemindersActivity
 import com.udacity.project4.utils.Constants
 
 /**
@@ -50,9 +51,6 @@ class AuthenticationActivity : AppCompatActivity() {
         binding.signinBtn.setOnClickListener {
             launchSignInFlow()
         }
-        binding.loginBtn.setOnClickListener {
-            launchLoginInFlow()
-        }
     }
 
     private fun initObserver() {
@@ -75,15 +73,6 @@ class AuthenticationActivity : AppCompatActivity() {
         )
     }
 
-    private fun launchLoginInFlow() {
-        val provider = arrayListOf(
-            AuthUI.IdpConfig.EmailBuilder().build(),
-            AuthUI.IdpConfig.GoogleBuilder().build()
-        )
-
-    }
-
-
 
 //------------------------------------- Observer Functions -----------------------------------------
 
@@ -91,10 +80,16 @@ class AuthenticationActivity : AppCompatActivity() {
     private fun updateUIAccordingToAuthenticationState(state: AuthenticationState) {
         when (state) {
             AuthenticationState.AUTHENTICATED -> {
-
+                // Jump to Main Page, if authenticated.
+                val intent = Intent(this, RemindersActivity::class.java)
+                // To pass any data to next activity
+                //intent.putExtra("keyIdentifier", value)
+                // start your next activity
+                startActivity(intent)
             }
             else -> {
-
+                // Change the UI to remind user to log in.
+                binding.welcomeInfoTv.text = getString(R.string.authentication_title_reminder)
             }
         }
     }

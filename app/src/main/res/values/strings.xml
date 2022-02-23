@@ -9,8 +9,6 @@
     <string name="save">Save</string>
     <string name="reminder_saved">Reminder Saved !</string>
     <string name="logout">Logout</string>
-    <string name="welcome_to_the_location_reminder_app">Welcome to the location reminder app</string>
-    <string name="login">Login</string>
     <string name="title_activity_maps">Map</string>
     <string name="normal_map">Normal Map</string>
     <string name="hybrid_map">Hybrid Map</string>
@@ -33,6 +31,11 @@
     <string name="welcome">Welcome</string>
     <string name="err_enter_title">Please enter title</string>
     <string name="err_select_location">Please select location</string>
+
+    <!-- Authentication -->
+    <string name="authentication_login_btn_label">Login</string>
+    <string name="authentication_title_welcome">Welcome to the location reminder app</string>
+    <string name="authentication_title_reminder">Please sign-up or sign-in to use the app function</string>
 
     <!-- Error strings -->
     <string name="geofence_unknown_error">Unknown error: the Geofence service is not available now.</string>

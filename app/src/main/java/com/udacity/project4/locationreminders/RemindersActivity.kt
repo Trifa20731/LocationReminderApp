@@ -11,9 +11,7 @@ import androidx.navigation.fragment.NavHostFragment
 import com.udacity.project4.R
 import kotlinx.android.synthetic.main.activity_reminders.*
 
-/**
- * The RemindersActivity that holds the reminders fragments
- */
+/** The RemindersActivity that holds the reminders fragment */
 class RemindersActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
