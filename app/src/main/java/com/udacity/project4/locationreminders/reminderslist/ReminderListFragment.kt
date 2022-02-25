@@ -1,9 +1,13 @@
 package com.udacity.project4.locationreminders.reminderslist
 
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import com.firebase.ui.auth.AuthUI
@@ -14,10 +18,12 @@ import com.udacity.project4.base.BaseFragment
 import com.udacity.project4.base.NavigationCommand
 import com.udacity.project4.databinding.FragmentRemindersBinding
 import com.udacity.project4.locationreminders.RemindersActivity
+import com.udacity.project4.utils.Constants
 import com.udacity.project4.utils.setDisplayHomeAsUpEnabled
 import com.udacity.project4.utils.setTitle
 import com.udacity.project4.utils.setup
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.util.jar.Manifest
 
 class ReminderListFragment : BaseFragment() {
 
@@ -64,6 +70,8 @@ class ReminderListFragment : BaseFragment() {
         }
 
         _viewModel.authenticationState.observe(viewLifecycleOwner, Observer { updateUIAccordingToAuthenticationState(it) })
+
+        checkPermission()
     }
 
     override fun onResume() {
@@ -79,9 +87,7 @@ class ReminderListFragment : BaseFragment() {
     private fun navigateToAddReminder() {
         //use the navigationCommand live data to navigate between the fragments
         _viewModel.navigationCommand.postValue(
-            NavigationCommand.To(
-                ReminderListFragmentDirections.toSaveReminder()
-            )
+            NavigationCommand.To(ReminderListFragmentDirections.toSaveReminder())
         )
     }
 
@@ -138,4 +144,40 @@ class ReminderListFragment : BaseFragment() {
         inflater.inflate(R.menu.main_menu, menu)
     }
 
+
+//------------------------------------- Permission Functions ---------------------------------------
+
+
+    private fun isLocationPermissionGranted() : Boolean {
+        return ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) === PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun checkPermission() {
+        if (isLocationPermissionGranted()) {
+            Toast.makeText(requireContext(), getString(R.string.location_permission_granted), Toast.LENGTH_SHORT).show()
+        } else {
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf<String>(android.Manifest.permission.ACCESS_FINE_LOCATION),
+                Constants.REQUEST_LOCATION_PERMISSION
+            )
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        // Check if location permissions are granted and if so enable the
+        // location data layer.
+        if (requestCode == Constants.REQUEST_LOCATION_PERMISSION) {
+            if (grantResults.isNotEmpty() && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                Toast.makeText(requireContext(), getString(R.string.location_permission_granted), Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(requireContext(), getString(R.string.location_permission_no_granted), Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 }

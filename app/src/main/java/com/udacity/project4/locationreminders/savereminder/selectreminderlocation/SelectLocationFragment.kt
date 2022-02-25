@@ -27,19 +27,26 @@ import com.udacity.project4.base.NavigationCommand
 import com.udacity.project4.databinding.FragmentSelectLocationBinding
 import com.udacity.project4.locationreminders.savereminder.SaveReminderViewModel
 import com.udacity.project4.utils.setDisplayHomeAsUpEnabled
+import org.koin.android.ext.android.bind
 import org.koin.android.ext.android.inject
 
-class SelectLocationFragment : BaseFragment() {
+class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
+
+    companion object {
+        const val LOG_TAG: String = "SelectLocationFragment"
+    }
+
+    private lateinit var mMap: GoogleMap
 
     //Use Koin to get the view model of the SaveReminder
     override val _viewModel: SaveReminderViewModel by inject()
     private lateinit var binding: FragmentSelectLocationBinding
 
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
-        binding =
-            DataBindingUtil.inflate(inflater, R.layout.fragment_select_location, container, false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_select_location, container, false)
 
         binding.viewModel = _viewModel
         binding.lifecycleOwner = this
@@ -47,7 +54,10 @@ class SelectLocationFragment : BaseFragment() {
         setHasOptionsMenu(true)
         setDisplayHomeAsUpEnabled(true)
 
-//        TODO: add the map setup implementation
+        //add the map setup implementation
+        val mapFragment = childFragmentManager.findFragmentById(R.id.google_map) as SupportMapFragment
+        mapFragment.getMapAsync(this)
+
 //        TODO: zoom to the user location after taking his permission
 //        TODO: add style to the map
 //        TODO: put a marker to location that the user selected
@@ -66,6 +76,18 @@ class SelectLocationFragment : BaseFragment() {
     }
 
 
+//------------------------------------- Google Map Functions ---------------------------------------
+
+
+    override fun onMapReady(googleMap: GoogleMap) {
+        Log.i(LOG_TAG, "onMapReady: Run.")
+        mMap = googleMap
+    }
+
+
+//------------------------------------- Menu Functions ---------------------------------------------
+
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.map_options, menu)
     }
@@ -73,19 +95,30 @@ class SelectLocationFragment : BaseFragment() {
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         // TODO: Change the map type based on the user's selection.
         R.id.normal_map -> {
+            Log.i(LOG_TAG, "The normal map has been chosen.")
+            mMap.mapType = GoogleMap.MAP_TYPE_NORMAL
             true
         }
         R.id.hybrid_map -> {
+            Log.i(LOG_TAG, "The hybrid map has been chosen.")
+            mMap.mapType = GoogleMap.MAP_TYPE_HYBRID
             true
         }
         R.id.satellite_map -> {
+            Log.i(LOG_TAG, "The satellite map has been chosen.")
+            mMap.mapType = GoogleMap.MAP_TYPE_SATELLITE
             true
         }
         R.id.terrain_map -> {
+            Log.i(LOG_TAG, "The terrain map has been chosen.")
+            mMap.mapType = GoogleMap.MAP_TYPE_TERRAIN
             true
         }
         else -> super.onOptionsItemSelected(item)
     }
+
+
+//--------------------------------------------------------------------------------------------------
 
 
 }
