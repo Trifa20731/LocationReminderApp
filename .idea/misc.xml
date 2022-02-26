@@ -3,11 +3,17 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/jason/Desktop/Android_practice/nd940-android-kotlin-c4-starter/starter/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.2605" />
+        <entry key="..\:/Users/jason/Desktop/Android_practice/nd940-android-kotlin-c4-starter/starter/app/src/main/res/drawable/ic_launcher_background.xml" value="0.2605" />
+        <entry key="..\:/Users/jason/Desktop/Android_practice/nd940-android-kotlin-c4-starter/starter/app/src/main/res/drawable/ic_location.xml" value="0.2605" />
+        <entry key="..\:/Users/jason/Desktop/Android_practice/nd940-android-kotlin-c4-starter/starter/app/src/main/res/drawable/ic_my_location_24.xml" value="0.3575" />
+        <entry key="..\:/Users/jason/Desktop/Android_practice/nd940-android-kotlin-c4-starter/starter/app/src/main/res/drawable/ic_no_data.xml" value="0.2605" />
+        <entry key="..\:/Users/jason/Desktop/Android_practice/nd940-android-kotlin-c4-starter/starter/app/src/main/res/drawable/ic_save.xml" value="0.2605" />
         <entry key="..\:/Users/jason/Desktop/Android_practice/nd940-android-kotlin-c4-starter/starter/app/src/main/res/layout/activity_authentication.xml" value="0.264" />
         <entry key="..\:/Users/jason/Desktop/Android_practice/nd940-android-kotlin-c4-starter/starter/app/src/main/res/layout/activity_reminder_description.xml" value="0.152" />
         <entry key="..\:/Users/jason/Desktop/Android_practice/nd940-android-kotlin-c4-starter/starter/app/src/main/res/layout/activity_reminders.xml" value="0.264" />
         <entry key="..\:/Users/jason/Desktop/Android_practice/nd940-android-kotlin-c4-starter/starter/app/src/main/res/layout/fragment_reminders.xml" value="0.23177083333333334" />
-        <entry key="..\:/Users/jason/Desktop/Android_practice/nd940-android-kotlin-c4-starter/starter/app/src/main/res/layout/fragment_select_location.xml" value="0.2520833333333333" />
+        <entry key="..\:/Users/jason/Desktop/Android_practice/nd940-android-kotlin-c4-starter/starter/app/src/main/res/layout/fragment_select_location.xml" value="0.5" />
         <entry key="..\:/Users/jason/Desktop/Android_practice/nd940-android-kotlin-c4-starter/starter/app/src/main/res/layout/it_reminder.xml" value="0.536" />
       </map>
     </option>

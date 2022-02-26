@@ -6,7 +6,6 @@
     <string name="reminder_title">Reminder Title</string>
     <string name="reminder_desc">Description</string>
     <string name="reminder_location">Reminder Location</string>
-    <string name="save">Save</string>
     <string name="reminder_saved">Reminder Saved !</string>
     <string name="logout">Logout</string>
     <string name="lat_long_snippet">Lat: %1$.5f, Long: %2$.5f</string>
@@ -27,7 +26,15 @@
     <string name="err_enter_title">Please enter title</string>
     <string name="err_select_location">Please select location</string>
 
+    <!-- Text View Labels -->
+    <string name="guide_to_save_label">Choose a POI and save the location</string>
+
+    <!-- Button Labels and Description -->
+    <string name="save_btn_label">Save</string>
+    <string name="des_my_location_btn_label">The button to set current location</string>
+
     <!-- Location and map -->
+    <string name="location_jump_to_current">Jump to Current Location</string>
     <string name="location_permission_granted">Location Permission Granted</string>
     <string name="location_permission_no_granted">Location Permission Not Granted</string>
     <string name="title_activity_maps">Map</string>
@@ -40,6 +47,12 @@
     <string name="authentication_login_btn_label">Login</string>
     <string name="authentication_title_welcome">Welcome to the location reminder app</string>
     <string name="authentication_title_reminder">Please sign-up or sign-in to use the app function</string>
+
+    <!-- Information strings -->
+    <string name="toast_info_save_success">Save the location successfully.</string>
+
+    <!-- Warming strings -->
+    <string name="toast_please_choose_poi">Please Select A POI Before Save</string>
 
     <!-- Error strings -->
     <string name="geofence_unknown_error">Unknown error: the Geofence service is not available now.</string>

@@ -8,4 +8,14 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="primaryButton">
+        <item name="android:background">@color/buttonPrimary</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="primaryText">
+        <item name="android:textSize">@dimen/text_size_large</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
 </resources>
