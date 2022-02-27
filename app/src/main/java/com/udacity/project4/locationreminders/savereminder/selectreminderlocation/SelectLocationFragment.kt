@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.navigation.findNavController
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -40,7 +41,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
 
     //Google Mapp
     private lateinit var mMap: GoogleMap
-    private var selectedLocationName: String? = null
+    private var selectedPoi: PointOfInterest? = null
 
     //Use Koin to get the view model of the SaveReminder
     override val _viewModel: SaveReminderViewModel by inject()
@@ -65,26 +66,23 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         return binding.root
     }
 
-    private fun onLocationSelected(locationInfo: String) {
-
-        //        TODO: When the user confirms on the selected location,
-        //         send back the selected location details to the view model
-        //         and navigate back to the previous fragment to save the reminder and add the geofence
-    }
-
 
 //------------------------------------- Click Functions --------------------------------------------
 
 
     private fun setClickListeners() {
         binding.savePoiBtn.setOnClickListener {
-            selectedLocationName?.let {
+            selectedPoi?.let {
                 Toast.makeText(requireContext(), getString(R.string.toast_info_save_success), Toast.LENGTH_SHORT).show()
                 onLocationSelected(it)
             }?:let{
                 Toast.makeText(requireContext(), getString(R.string.toast_please_choose_poi), Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    private fun onLocationSelected(poi: PointOfInterest) {
+        view?.findNavController()?.navigate(SelectLocationFragmentDirections.actionSelectLocationFragmentToSaveReminderFragment(poi))
     }
 
 
@@ -148,7 +146,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
                     .title(poi.name)
             )
             poiMarker.showInfoWindow()
-            selectedLocationName = poi.name
+            selectedPoi = poi
             Toast.makeText(requireContext(), "The location ${poi.name} has been chosen", Toast.LENGTH_SHORT).show()
         }
     }
@@ -233,7 +231,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     }
 
     /**
-     *
+     * Receive the decision of User and make further action.
      * */
     override fun onRequestPermissionsResult(
         requestCode: Int,
