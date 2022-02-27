@@ -71,6 +71,7 @@ class ReminderListFragment : BaseFragment() {
 
         _viewModel.authenticationState.observe(viewLifecycleOwner, Observer { updateUIAccordingToAuthenticationState(it) })
 
+        checkPermission()
     }
 
     override fun onResume() {
@@ -144,4 +145,39 @@ class ReminderListFragment : BaseFragment() {
     }
 
 
+//------------------------------------- Permission Functions ---------------------------------------
+
+
+    private fun isLocationPermissionGranted() : Boolean {
+        return ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) === PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun checkPermission() {
+        if (isLocationPermissionGranted()) {
+            Toast.makeText(requireContext(), getString(R.string.location_permission_granted), Toast.LENGTH_SHORT).show()
+        } else {
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf<String>(android.Manifest.permission.ACCESS_FINE_LOCATION),
+                Constants.REQUEST_LOCATION_PERMISSION
+            )
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        // Check if location permissions are granted and if so enable the
+        // location data layer.
+        if (requestCode == Constants.REQUEST_LOCATION_PERMISSION) {
+            if (grantResults.isNotEmpty() && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                Toast.makeText(requireContext(), getString(R.string.location_permission_granted), Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(requireContext(), getString(R.string.location_permission_no_granted), Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 }
