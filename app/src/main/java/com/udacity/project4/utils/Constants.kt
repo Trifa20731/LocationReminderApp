@@ -17,4 +17,7 @@ object Constants {
     val HONG_KONG_LATLNG: LatLng = LatLng(22.302711, 114.177216)
     const val ZOOM_LEVEL: Float = 15f
 
+    // GeoFence.
+    const val GEOFENCE_RADIUS_IN_METERS: Float = 100f
+
 }
