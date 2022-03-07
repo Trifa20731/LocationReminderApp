@@ -19,5 +19,6 @@ object Constants {
 
     // GeoFence.
     const val GEOFENCE_RADIUS_IN_METERS: Float = 100f
+    const val GEOFENCE_RADIUS_IN_METERS_SHORT   : Float = 50f
 
 }

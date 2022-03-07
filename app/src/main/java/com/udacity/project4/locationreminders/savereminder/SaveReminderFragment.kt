@@ -120,11 +120,13 @@ class SaveReminderFragment : BaseFragment() {
 
     private fun initClickListener() {
         binding.selectLocation.setOnClickListener {
+            Log.d(LOG_TAG, "SelectLocation button has been clicked.")
             //Navigate to another fragment to get the user location
             _viewModel.navigationCommand.value =
                 NavigationCommand.To(SaveReminderFragmentDirections.actionSaveReminderFragmentToSelectLocationFragment())
         }
         binding.saveReminder.setOnClickListener {
+            Log.d(LOG_TAG, "Save Reminder button has been clicked.")
             val title = _viewModel.reminderTitle.value
             val description = _viewModel.reminderDescription.value
             val location = _viewModel.reminderSelectedLocationStr.value
@@ -143,13 +145,17 @@ class SaveReminderFragment : BaseFragment() {
 
     @SuppressLint("MissingPermission")
     private fun addGeofencing() {
+        Log.d(LOG_TAG, "AddGeoFencing: Run")
+
+        Log.d(LOG_TAG, "Geofencing latitude is ${mReminderDataItem.latitude}")
+        Log.d(LOG_TAG, "Geofencing longitude it ${mReminderDataItem.longitude}")
 
         // Build the Geofence Object
         val geofence = Geofence.Builder()
             .setRequestId(mReminderDataItem.id)
             .setCircularRegion(mReminderDataItem.latitude!!,
                 mReminderDataItem.longitude!!,
-                Constants.GEOFENCE_RADIUS_IN_METERS
+                Constants.GEOFENCE_RADIUS_IN_METERS_SHORT
             )
             .setExpirationDuration(Geofence.NEVER_EXPIRE)
             .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
@@ -169,8 +175,9 @@ class SaveReminderFragment : BaseFragment() {
                 geofencingClient.addGeofences(geofencingRequest, geofencePendingIntent)?.run {
                     addOnSuccessListener {
                         _viewModel.showToast.postValue(getString(R.string.geofence_entered))
-                        _viewModel.validateAndSaveReminder(mReminderDataItem)
+                        _viewModel.saveReminder(mReminderDataItem)
                         _viewModel.navigationCommand.value = NavigationCommand.To(SaveReminderFragmentDirections.actionSaveReminderFragmentToReminderListFragment())
+                        Log.d(LOG_TAG, "Add the geofencing successful.")
                     }
                     addOnFailureListener {
                         // Failed to add geofences.
@@ -178,6 +185,7 @@ class SaveReminderFragment : BaseFragment() {
                         if ((it.message != null)) {
                             Log.w(LOG_TAG, it)
                         }
+                        Log.d(LOG_TAG, "Failure to add the geofencing.")
                     }
                 }
             }
@@ -189,14 +197,18 @@ class SaveReminderFragment : BaseFragment() {
      * current hint isn't yet active.
      */
     private fun checkPermissionsAndStartGeofencing() {
+        Log.d(LOG_TAG, "checkPermissionsAndStartGeoFencing: run")
         if (foregroundAndBackgroundLocationPermissionApproved()) {
+            Log.d(LOG_TAG,"Permission Granted.")
             checkDeviceLocationSettingsAndStartGeofence()
         } else {
+            Log.d(LOG_TAG,"Permission Deny.")
             requestForegroundAndBackgroundLocationPermissions()
         }
     }
 
     private fun checkDeviceLocationSettingsAndStartGeofence(resolve:Boolean = true) {
+        Log.d(LOG_TAG, "checkDeviceLocationSettingsAndStartGeofence")
 
         // Set the request.
         val locationRequest = LocationRequest.create().apply {
@@ -210,6 +222,7 @@ class SaveReminderFragment : BaseFragment() {
 
         // Failure Listener
         locationSettingsResponseTask.addOnFailureListener { exception ->
+            Log.d(LOG_TAG, "Failure Listener: Triggered.")
             if (exception is ResolvableApiException && resolve){
                 try {
                     exception.startResolutionForResult(requireActivity(),
@@ -231,6 +244,7 @@ class SaveReminderFragment : BaseFragment() {
         // Complete Listener.
         locationSettingsResponseTask.addOnCompleteListener {
             if ( it.isSuccessful ) {
+                Log.d(LOG_TAG, "successful triggered.")
                 addGeofencing()
             }
         }
@@ -281,6 +295,8 @@ class SaveReminderFragment : BaseFragment() {
      */
     @TargetApi(29 )
     private fun requestForegroundAndBackgroundLocationPermissions() {
+        Log.d(LOG_TAG, "requestForegroundAndBackgroundLocationPermissions: run.")
+
         if (foregroundAndBackgroundLocationPermissionApproved())
             return
 
@@ -297,7 +313,6 @@ class SaveReminderFragment : BaseFragment() {
             else -> Constants.REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE
         }
 
-        Log.d(LOG_TAG, "Request foreground only location permission")
         ActivityCompat.requestPermissions(
             requireActivity(),
             permissionsArray,
