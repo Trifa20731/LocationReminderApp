@@ -281,7 +281,7 @@ class SaveReminderFragment : BaseFragment() {
             if (runningQOrLater) {
                 PackageManager.PERMISSION_GRANTED ==
                         ActivityCompat.checkSelfPermission(requireContext(),
-                            Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+                            android.Manifest.permission.ACCESS_BACKGROUND_LOCATION)
             } else {
                 true
             }
