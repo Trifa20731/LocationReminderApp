@@ -1,21 +1,18 @@
 package com.udacity.project4.locationreminders.savereminder
 
 import android.app.Application
-
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider
-import androidx.test.ext.junit.rules.activityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-
+import com.udacity.project4.R
 import com.udacity.project4.locationreminders.MainCoroutineRule
-import com.udacity.project4.locationreminders.RemindersActivity
 import com.udacity.project4.locationreminders.data.FakeDataSource
+import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import com.udacity.project4.locationreminders.getOrAwaitValue
 import com.udacity.project4.locationreminders.reminderslist.ReminderDataItem
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
-
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
@@ -27,7 +24,6 @@ import org.koin.core.context.stopKoin
 @ExperimentalCoroutinesApi
 @RunWith(AndroidJUnit4::class)
 class SaveReminderViewModelTest {
-    //TODO: provide testing to the SaveReminderView and its live data objects
 
     // Executes each task synchronously using Architecture Components.
     @get:Rule
@@ -46,8 +42,6 @@ class SaveReminderViewModelTest {
     @get:Rule
     var mainCoroutineRule = MainCoroutineRule()
 
-    @get:Rule
-    var activityScenarioRule = activityScenarioRule<RemindersActivity>()
 
     @Before
     fun setupSaveReminderViewModel() {
@@ -62,6 +56,66 @@ class SaveReminderViewModelTest {
                 applicationContext,
                 fakeDataSource
             )
+    }
+
+    @Test
+    fun reminders_saveReminderWithEmptyTitle_returnFalse() = runBlockingTest {
+
+        // Given
+        val fakeReminderDataItem = ReminderDataItem(
+            "test1 title",
+            "test1 des",
+            "test1 locate",
+            60.08,
+            35.99
+        )
+
+        // When
+        fakeReminderDataItem.title = ""
+
+        // Then
+        assertThat(saveReminderViewModel.validateEnteredData(fakeReminderDataItem), `is`(false))
+
+    }
+
+    @Test
+    fun reminders_saveReminderWithEmptyTitle_showErrorEnterTitleSnakeBar() = runBlockingTest {
+
+        // Given
+        val fakeReminderDataItem = ReminderDataItem(
+            "test1 title",
+            "test1 des",
+            "test1 locate",
+            60.08,
+            35.99
+        )
+
+        // When
+        fakeReminderDataItem.title = ""
+        saveReminderViewModel.validateAndSaveReminder(fakeReminderDataItem)
+
+        // Then
+        assertThat(saveReminderViewModel.showSnackBarInt.getOrAwaitValue(), `is`(R.string.err_enter_title))
+    }
+
+    @Test
+    fun reminders_saveReminderWithEmptyLocation_showErrorEnterLocationSnakeBar() = runBlockingTest {
+
+        // Given
+        val fakeReminderDataItem = ReminderDataItem(
+            "test1 title",
+            "test1 des",
+            "test1 locate",
+            60.08,
+            35.99
+        )
+
+        // When
+        fakeReminderDataItem.location = ""
+        saveReminderViewModel.validateAndSaveReminder(fakeReminderDataItem)
+
+        // Then
+        assertThat(saveReminderViewModel.showSnackBarInt.getOrAwaitValue(), `is`(R.string.err_select_location))
     }
 
     @Test
@@ -87,26 +141,5 @@ class SaveReminderViewModelTest {
 
     }
 
-    @Test
-    fun reminders_saveReminder_saveSuccessful(){
-        // Given
-        val fakeReminderDataItem = ReminderDataItem(
-            "test1 title",
-            "test1 des",
-            "test1 locate",
-            60.08,
-            35.99
-        )
-
-        // When
-        saveReminderViewModel.saveReminder(fakeReminderDataItem)
-
-        // Then
-        assertThat(saveReminderViewModel.reminderTitle.value, `is`("test1 title"))
-        assertThat(saveReminderViewModel.reminderDescription.value, `is`("test1 des"))
-        assertThat(saveReminderViewModel.reminderSelectedLocationStr.value, `is`("test1 locate"))
-        assertThat(saveReminderViewModel.latitude.value, `is`(60.08))
-        assertThat(saveReminderViewModel.longitude.value, `is`(35.99))
-    }
 
 }
