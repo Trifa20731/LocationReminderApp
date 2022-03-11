@@ -147,9 +147,6 @@ class SaveReminderFragment : BaseFragment() {
     private fun addGeofencing() {
         Log.d(LOG_TAG, "AddGeoFencing: Run")
 
-        Log.d(LOG_TAG, "Geofencing latitude is ${mReminderDataItem.latitude}")
-        Log.d(LOG_TAG, "Geofencing longitude it ${mReminderDataItem.longitude}")
-
         // Build the Geofence Object
         val geofence = Geofence.Builder()
             .setRequestId(mReminderDataItem.id)

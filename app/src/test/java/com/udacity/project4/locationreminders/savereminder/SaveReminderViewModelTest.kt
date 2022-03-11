@@ -1,6 +1,7 @@
 package com.udacity.project4.locationreminders.savereminder
 
 import android.app.Application
+import android.security.identity.ResultData
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -9,6 +10,7 @@ import com.udacity.project4.base.NavigationCommand
 import com.udacity.project4.locationreminders.MainCoroutineRule
 import com.udacity.project4.locationreminders.data.FakeDataSource
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
+import com.udacity.project4.locationreminders.data.dto.Result
 import com.udacity.project4.locationreminders.getOrAwaitValue
 import com.udacity.project4.locationreminders.reminderslist.ReminderDataItem
 
@@ -68,6 +70,43 @@ class SaveReminderViewModelTest {
     )
 
     @Test
+    fun reminder_saveReminder_returnSuccess() = runBlockingTest {
+
+        // Given
+        val fakeReminderDataItem = getFakeReminderDateItem()
+
+        // When
+        saveReminderViewModel.saveReminder(fakeReminderDataItem)
+
+        // Then
+        val value = saveReminderViewModel.dataSource.getReminder(fakeReminderDataItem.id) as Result.Success<ReminderDTO>
+        val reminder = value.data
+        assertThat(reminder.title, `is`("test1 title"))
+        assertThat(reminder.description, `is`("test1 des"))
+        assertThat(reminder.id, `is`(fakeReminderDataItem.id))
+        assertThat(reminder.latitude, `is`(60.08))
+        assertThat(reminder.longitude, `is`(35.99))
+
+    }
+
+    @Test
+    fun reminder_saveReminder_returnError() = runBlockingTest {
+
+        // Given
+        val fakeReminderDataItem = getFakeReminderDateItem()
+        fakeDataSource.setReturnError(true)
+
+        // When
+        saveReminderViewModel.saveReminder(fakeReminderDataItem)
+
+        // Then
+        val value = saveReminderViewModel.dataSource.getReminder(fakeReminderDataItem.id) as Result.Error
+        val errorMessages = value.message
+        assertThat(errorMessages, `is`("Task Exception."))
+    }
+
+
+    @Test
     fun reminders_saveReminderWithEmptyTitle_returnFalse() = runBlockingTest {
 
         // Given
@@ -93,6 +132,7 @@ class SaveReminderViewModelTest {
 
         // Then
         assertThat(saveReminderViewModel.showSnackBarInt.getOrAwaitValue(), `is`(R.string.err_enter_title))
+
     }
 
     @Test
@@ -107,6 +147,7 @@ class SaveReminderViewModelTest {
 
         // Then
         assertThat(saveReminderViewModel.showSnackBarInt.getOrAwaitValue(), `is`(R.string.err_select_location))
+
     }
 
     @Test
@@ -125,5 +166,7 @@ class SaveReminderViewModelTest {
         assertThat(saveReminderViewModel.showLoading.getOrAwaitValue(), `is`(false))
 
     }
+
+
 
 }

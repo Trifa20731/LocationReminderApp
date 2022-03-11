@@ -33,7 +33,6 @@ abstract class BaseFragment : Fragment() {
         _viewModel.showSnackBarInt.observe(this, Observer {
             Snackbar.make(this.requireView(), getString(it), Snackbar.LENGTH_LONG).show()
         })
-
         _viewModel.navigationCommand.observe(this, Observer { command ->
             when (command) {
                 is NavigationCommand.To -> findNavController().navigate(command.directions)
