@@ -5,6 +5,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.udacity.project4.R
+import com.udacity.project4.base.NavigationCommand
 import com.udacity.project4.locationreminders.MainCoroutineRule
 import com.udacity.project4.locationreminders.data.FakeDataSource
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
@@ -58,17 +59,19 @@ class SaveReminderViewModelTest {
             )
     }
 
+    private fun getFakeReminderDateItem() = ReminderDataItem(
+        "test1 title",
+        "test1 des",
+        "test1 locate",
+        60.08,
+        35.99
+    )
+
     @Test
     fun reminders_saveReminderWithEmptyTitle_returnFalse() = runBlockingTest {
 
         // Given
-        val fakeReminderDataItem = ReminderDataItem(
-            "test1 title",
-            "test1 des",
-            "test1 locate",
-            60.08,
-            35.99
-        )
+        val fakeReminderDataItem = getFakeReminderDateItem()
 
         // When
         fakeReminderDataItem.title = ""
@@ -82,13 +85,7 @@ class SaveReminderViewModelTest {
     fun reminders_saveReminderWithEmptyTitle_showErrorEnterTitleSnakeBar() = runBlockingTest {
 
         // Given
-        val fakeReminderDataItem = ReminderDataItem(
-            "test1 title",
-            "test1 des",
-            "test1 locate",
-            60.08,
-            35.99
-        )
+        val fakeReminderDataItem = getFakeReminderDateItem()
 
         // When
         fakeReminderDataItem.title = ""
@@ -102,13 +99,7 @@ class SaveReminderViewModelTest {
     fun reminders_saveReminderWithEmptyLocation_showErrorEnterLocationSnakeBar() = runBlockingTest {
 
         // Given
-        val fakeReminderDataItem = ReminderDataItem(
-            "test1 title",
-            "test1 des",
-            "test1 locate",
-            60.08,
-            35.99
-        )
+        val fakeReminderDataItem = getFakeReminderDateItem()
 
         // When
         fakeReminderDataItem.location = ""
@@ -119,16 +110,10 @@ class SaveReminderViewModelTest {
     }
 
     @Test
-    fun saveReminder_showLoading() = runBlockingTest {
+    fun reminder_saveReminder_showLoading() = runBlockingTest {
 
         // Given
-        val fakeReminderDataItem = ReminderDataItem(
-            "test1 title",
-            "test1 des",
-            "test1 locate",
-            60.08,
-            35.99
-        )
+        val fakeReminderDataItem = getFakeReminderDateItem()
 
         // When
         mainCoroutineRule.pauseDispatcher()
@@ -140,6 +125,5 @@ class SaveReminderViewModelTest {
         assertThat(saveReminderViewModel.showLoading.getOrAwaitValue(), `is`(false))
 
     }
-
 
 }
