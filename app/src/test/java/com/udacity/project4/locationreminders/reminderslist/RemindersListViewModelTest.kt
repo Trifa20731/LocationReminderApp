@@ -19,11 +19,15 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.koin.core.context.stopKoin
 
+/**
+ * Please comment the code in View Model and Fragment before doing test:
+ *     ReminderListFragment: Line 73.
+ *     ReminderListViewModel: Line 23 to Line 29.
+ * */
+
 @RunWith(AndroidJUnit4::class)
 @ExperimentalCoroutinesApi
 class RemindersListViewModelTest {
-
-    //TODO: provide testing to the RemindersListViewModel and its live data objects
 
     // Executes each task synchronously using Architecture Components.
     @get:Rule
@@ -59,15 +63,16 @@ class RemindersListViewModelTest {
     }
 
     @Test
-    fun reminderList_loadReminderList_showData() {
+    fun reminderList_loadReminderList_returnError() {
 
         // Give
-        val reminderDataItem4 = ReminderDTO( "test4 title", "test4 des", "test4 locate", 39.09, -94.54 )
-
+        fakeDataSource.setReturnError(true)
 
         // When
+        remindersListViewModel.loadReminders()
 
         // Then
+        assertThat(remindersListViewModel.showSnackBar.getOrAwaitValue(), `is`("Task Exception."))
 
 
     }
@@ -86,10 +91,42 @@ class RemindersListViewModelTest {
 
     }
 
+    @Test
+    fun reminderList_loadReminderList_showData() = runBlockingTest() {
+
+        // Give
+
+        // When
+        remindersListViewModel.loadReminders()
+
+        // Then
+        val initData: ReminderDTO = getFakeReminderDataItemList()!![1]
+        val result: ReminderDataItem = remindersListViewModel.remindersList.getOrAwaitValue()!![1]
+        assertThat(result.description, `is`(initData.description))
+        assertThat(result.latitude, `is`(initData.latitude))
+        assertThat(remindersListViewModel.showNoData.getOrAwaitValue(), `is`(false) )
+
+    }
+
+    @Test
+    fun reminderList_loadReminderList_showLoading() = runBlockingTest() {
+        // Give
+
+        // When
+        mainCoroutineRule.pauseDispatcher()
+        remindersListViewModel.loadReminders()
+
+        // Then
+        assertThat(remindersListViewModel.showLoading.getOrAwaitValue(), `is`(true))
+        mainCoroutineRule.resumeDispatcher()
+        assertThat(remindersListViewModel.showLoading.getOrAwaitValue(), `is`(false))
+    }
+
+
     private fun getFakeReminderDataItemList(): MutableList<ReminderDTO>? {
         val reminderDataItem1 = ReminderDTO( "test1 title", "test1 des", "test1 locate", 60.08, 35.99 )
-        val reminderDataItem2 = ReminderDTO( "test2 title", "test2 des", "test1 locate", 45.27, 13.29 )
-        val reminderDataItem3 = ReminderDTO( "test3 title", "test3 des", "test1 locate", 39.09, -94.54 )
+        val reminderDataItem2 = ReminderDTO( "test2 title", "test2 des", "test2 locate", 45.27, 13.29 )
+        val reminderDataItem3 = ReminderDTO( "test3 title", "test3 des", "test3 locate", 39.09, -94.54 )
         return mutableListOf(reminderDataItem1, reminderDataItem2, reminderDataItem3)
     }
 }

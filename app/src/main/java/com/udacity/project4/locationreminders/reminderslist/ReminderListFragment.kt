@@ -69,7 +69,8 @@ class ReminderListFragment : BaseFragment() {
             navigateToAddReminder()
         }
 
-        //_viewModel.authenticationState.observe(viewLifecycleOwner, Observer { updateUIAccordingToAuthenticationState(it) })
+        //Comment this part to do view model test.
+        _viewModel.authenticationState.observe(viewLifecycleOwner, Observer { updateUIAccordingToAuthenticationState(it) })
 
         checkPermission()
     }
