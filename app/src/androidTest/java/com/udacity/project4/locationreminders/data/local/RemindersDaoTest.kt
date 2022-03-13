@@ -5,7 +5,6 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.SmallTest;
-import com.google.protobuf.NullValue
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 
 import org.junit.Before;
@@ -68,24 +67,6 @@ class RemindersDaoTest {
     }
 
     @Test
-    fun deleteAllRemindersAndGetNullValue() = runBlockingTest {
-
-        // Give
-        val fakeReminderDTO: ReminderDTO = getFakeReminderDataItemList()[0]
-        remindersDatabase.reminderDao().saveReminder(fakeReminderDTO)
-        val initLoaded = remindersDatabase.reminderDao().getReminderById(fakeReminderDTO.id)
-        assertThat<ReminderDTO>( initLoaded as ReminderDTO, notNullValue() )
-
-        // When
-        remindersDatabase.reminderDao().deleteAllReminders()
-        val currentLoaded = remindersDatabase.reminderDao().getReminderById(fakeReminderDTO.id)
-
-        // Then
-        assertThat<ReminderDTO>( currentLoaded, nullValue() )
-
-    }
-
-    @Test
     fun saveReminderAndGetReminders() = runBlockingTest {
 
         // Give
@@ -105,6 +86,24 @@ class RemindersDaoTest {
         assertThat(loaded.description, `is`(fakeReminderDataItemList[1].description))
         assertThat(loaded.title, `is`(fakeReminderDataItemList[1].title))
         assertThat(loaded.location, `is`(fakeReminderDataItemList[1].location))
+
+    }
+
+    @Test
+    fun deleteAllRemindersAndGetNullValue() = runBlockingTest {
+
+        // Give
+        val fakeReminderDTO: ReminderDTO = getFakeReminderDataItemList()[0]
+        remindersDatabase.reminderDao().saveReminder(fakeReminderDTO)
+        val initLoaded = remindersDatabase.reminderDao().getReminderById(fakeReminderDTO.id)
+        assertThat<ReminderDTO>( initLoaded as ReminderDTO, notNullValue() )
+
+        // When
+        remindersDatabase.reminderDao().deleteAllReminders()
+        val currentLoaded = remindersDatabase.reminderDao().getReminderById(fakeReminderDTO.id)
+
+        // Then
+        assertThat<ReminderDTO>( currentLoaded, nullValue() )
 
     }
 
