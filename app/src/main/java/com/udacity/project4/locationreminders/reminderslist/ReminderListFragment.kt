@@ -70,7 +70,7 @@ class ReminderListFragment : BaseFragment() {
         }
 
         //Comment this part to do view model test.
-        _viewModel.authenticationState.observe(viewLifecycleOwner, Observer { updateUIAccordingToAuthenticationState(it) })
+        //_viewModel.authenticationState.observe(viewLifecycleOwner, Observer { updateUIAccordingToAuthenticationState(it) })
 
         checkPermission()
     }
@@ -119,7 +119,7 @@ class ReminderListFragment : BaseFragment() {
         val adapter = RemindersListAdapter {
         }
 
-//        setup the recycler view using the extension function
+        // setup the recycler view using the extension function
         binding.reminderssRecyclerView.setup(adapter)
     }
 
@@ -141,7 +141,7 @@ class ReminderListFragment : BaseFragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
-//        display logout as menu item
+        // display logout as menu item
         inflater.inflate(R.menu.main_menu, menu)
     }
 
