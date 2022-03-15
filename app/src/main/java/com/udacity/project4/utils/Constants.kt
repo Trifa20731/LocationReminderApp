@@ -21,4 +21,9 @@ object Constants {
     const val GEOFENCE_RADIUS_IN_METERS: Float = 100f
     const val GEOFENCE_RADIUS_IN_METERS_SHORT   : Float = 50f
 
+    // Default POI.
+    val DEFAULT_POI_LATLNG: LatLng = LatLng(33.59140365980528,130.3988742828369)
+    const val DEFAULT_POI_ID: String = "ChIJd5DjRI6RQTURMDt50eAUgg4"
+    const val DEFAULT_POI_NAME: String = "Tenjin 天神"
+
 }

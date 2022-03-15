@@ -53,6 +53,7 @@
 
     <!-- Warming strings -->
     <string name="toast_please_choose_poi">Please Select A POI Before Save</string>
+    <string name="toast_using_default_poi">Set Default POI</string>
     <string name="toast_no_poi_chosen">No POI Chosen</string>
 
     <!-- Error strings -->

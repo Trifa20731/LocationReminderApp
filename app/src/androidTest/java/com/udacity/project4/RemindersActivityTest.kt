@@ -1,16 +1,29 @@
 package com.udacity.project4
 
 import android.app.Application
+import androidx.fragment.app.testing.FragmentScenario.launch
+import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
+import androidx.test.espresso.Espresso
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
+
+import com.udacity.project4.locationreminders.RemindersActivity
 import com.udacity.project4.locationreminders.data.ReminderDataSource
+import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import com.udacity.project4.locationreminders.data.local.LocalDB
 import com.udacity.project4.locationreminders.data.local.RemindersLocalRepository
 import com.udacity.project4.locationreminders.reminderslist.RemindersListViewModel
 import com.udacity.project4.locationreminders.savereminder.SaveReminderViewModel
+
 import kotlinx.coroutines.runBlocking
+
 import org.junit.Before
+import org.junit.Test
 import org.junit.runner.RunWith
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.startKoin
@@ -66,7 +79,36 @@ class RemindersActivityTest :
     }
 
 
-//    TODO: add End to End testing to the app
+    // TODO: Launch in the list fragment, click the add button add the new location, then show in the list fragment.
+    @Test
+    fun addNewReminder_showInReminderList() = runBlocking {
+
+        // Start Up a Reminder Screen.
+        val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
+
+        // Click the FAB, Move to Save Reminder Fragment.
+        onView(withId(R.id.addReminderFAB)).check(matches(isDisplayed()))
+        onView(withId(R.id.addReminderFAB)).perform(click())
+
+        // Select the location
+        onView(withId(R.id.selectLocation)).check(matches(isDisplayed()))
+        onView(withId(R.id.selectLocation)).perform(click())
+        onView(withId(R.id.save_poi_btn)).perform(click())
+
+        // Enter the information in the save reminder fragment.
+
+
+        // Make sure the activity is closed before resetting the db.
+        activityScenario.close()
+
+    }
+
+    private fun getFakeReminderDTOList(): MutableList<ReminderDTO> {
+        val reminderDataItem1 = ReminderDTO( "test1 title", "test1 des", "test1 locate", 60.08, 35.99 )
+        val reminderDataItem2 = ReminderDTO( "test2 title", "test2 des", "test2 locate", 45.27, 13.29 )
+        val reminderDataItem3 = ReminderDTO( "test3 title", "test3 des", "test3 locate", 39.09, -94.54 )
+        return mutableListOf(reminderDataItem1, reminderDataItem2, reminderDataItem3)
+    }
 
 
 }

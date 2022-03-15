@@ -77,7 +77,8 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
                 _viewModel.showToast.postValue(getString(R.string.toast_info_save_success))
                 onLocationSelected(it)
             }?:let{
-                _viewModel.showToast.postValue(getString(R.string.toast_please_choose_poi))
+                _viewModel.showToast.postValue(getString(R.string.toast_using_default_poi))
+                onLocationSelected(getDefaultPOI())
             }
         }
     }
@@ -130,7 +131,6 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
                     .snippet(snippet)
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
             )
-
         }
     }
 
@@ -148,6 +148,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
                     .position(poi.latLng)
                     .title(poi.name)
             )
+            Log.d(LOG_TAG, "The name of poi is ${poi.name}, the latlng is ${poi.latLng}, the id is ${poi.placeId}")
             poiMarker.showInfoWindow()
             selectedPoi = poi
             Toast.makeText(requireContext(), "The location ${poi.name} has been chosen", Toast.LENGTH_SHORT).show()
@@ -252,6 +253,17 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
             }
         }
     }
+
+
+//------------------------------------- Default POI ------------------------------------------------
+
+
+    private fun getDefaultPOI() =
+        PointOfInterest(
+            Constants.DEFAULT_POI_LATLNG,
+            Constants.DEFAULT_POI_ID,
+            Constants.DEFAULT_POI_NAME
+        )
 
 
 }
