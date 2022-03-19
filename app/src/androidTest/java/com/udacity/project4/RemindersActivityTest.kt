@@ -7,6 +7,7 @@ import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.action.ViewActions.replaceText
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -19,6 +20,8 @@ import com.udacity.project4.locationreminders.data.local.LocalDB
 import com.udacity.project4.locationreminders.data.local.RemindersLocalRepository
 import com.udacity.project4.locationreminders.reminderslist.RemindersListViewModel
 import com.udacity.project4.locationreminders.savereminder.SaveReminderViewModel
+import com.udacity.project4.utils.Constants
+import kotlinx.coroutines.launch
 
 import kotlinx.coroutines.runBlocking
 
@@ -79,9 +82,17 @@ class RemindersActivityTest :
     }
 
 
-    // TODO: Launch in the list fragment, click the add button add the new location, then show in the list fragment.
+    // Launch in the list fragment, click the add button add the new location, then show in the list fragment.
     @Test
     fun addNewReminder_showInReminderList() = runBlocking {
+
+        // Save Data into Repo
+        val fakeReminderDTOList = getFakeReminderDTOList()
+        val job = launch {
+            fakeReminderDTOList.forEach {
+                repository.saveReminder(it)
+            }
+        }
 
         // Start Up a Reminder Screen.
         val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
@@ -95,11 +106,20 @@ class RemindersActivityTest :
         onView(withId(R.id.selectLocation)).perform(click())
         onView(withId(R.id.save_poi_btn)).perform(click())
 
-        // Enter the information in the save reminder fragment.
-
+        // Check the location, Enter the information in the save reminder fragment.
+        onView(withText(Constants.DEFAULT_POI_NAME)).check(matches(isDisplayed()))
+        onView(withId(R.id.reminderTitle)).perform(replaceText(Constants.DEFAULT_TITLE))
+        onView(withId(R.id.reminderDescription)).perform(replaceText(Constants.DEFAULT_DESCRIPTION))
+        onView(withId(R.id.saveReminder)).perform(click())
 
         // Make sure the activity is closed before resetting the db.
+        onView(withText(Constants.DEFAULT_TITLE)).check(matches(isDisplayed()))
+        onView(withText(Constants.DEFAULT_DESCRIPTION)).check(matches(isDisplayed()))
+        onView(withText(Constants.DEFAULT_POI_NAME)).check(matches(isDisplayed()))
+
         activityScenario.close()
+
+        job.cancel()
 
     }
 

@@ -134,7 +134,7 @@ class ReminderListFragmentTest: AutoCloseKoinTest() {
     }
 
 
-    // TODO: add testing for the error messages.
+    // Testing for the error messages.
     @Test
     fun showNoDataMessage() = runBlockingTest {
 

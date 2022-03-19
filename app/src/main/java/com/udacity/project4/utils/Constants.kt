@@ -25,5 +25,7 @@ object Constants {
     val DEFAULT_POI_LATLNG: LatLng = LatLng(33.59140365980528,130.3988742828369)
     const val DEFAULT_POI_ID: String = "ChIJd5DjRI6RQTURMDt50eAUgg4"
     const val DEFAULT_POI_NAME: String = "Tenjin 天神"
+    const val DEFAULT_TITLE: String = "Default Title"
+    const val DEFAULT_DESCRIPTION: String = "Default Description"
 
 }
