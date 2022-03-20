@@ -15,7 +15,6 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-import androidx.navigation.findNavController
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -46,7 +45,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback, LocationListe
 
     //Google Mapp
     private lateinit var mMap: GoogleMap
-    private var selectedPoi: PointOfInterest? = null
+    private var selectedLocation: SelectedLocation? = null
     private lateinit var locationManager: LocationManager
 
     //Use Koin to get the view model of the SaveReminder
@@ -82,19 +81,19 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback, LocationListe
 
     private fun setClickListeners() {
         binding.savePoiBtn.setOnClickListener {
-            selectedPoi?.let {
+            selectedLocation?.let {
                 _viewModel.showToast.postValue(getString(R.string.toast_info_save_success))
                 onLocationSelected(it)
             }?:let{
                 _viewModel.showToast.postValue(getString(R.string.toast_using_default_poi))
-                onLocationSelected(getDefaultPOI())
+                onLocationSelected(getDefaultLocation())
             }
         }
     }
 
-    private fun onLocationSelected(poi: PointOfInterest) {
+    private fun onLocationSelected(location: SelectedLocation) {
         _viewModel.navigationCommand.postValue(
-            NavigationCommand.To(SelectLocationFragmentDirections.actionSelectLocationFragmentToSaveReminderFragment(poi))
+            NavigationCommand.To(SelectLocationFragmentDirections.actionSelectLocationFragmentToSaveReminderFragment(location))
         )
     }
 
@@ -111,11 +110,11 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback, LocationListe
         setMapPOIClick(mMap)
         setMapStyle(mMap)
         enableMyLocation()
-        setMapZoomInMyLocation(mMap)
+        setMapZoomInMyLocation()
     }
 
     /** Set the initial location to Hong Kong. */
-    private fun setMapZoomInMyLocation(map:GoogleMap) {
+    private fun setMapZoomInMyLocation() {
         try {
             // Request location updates
             locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0L, 0f, this)
@@ -144,6 +143,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback, LocationListe
                     .snippet(snippet)
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
             )
+            selectedLocation = SelectedLocation(latLng, "Custom Location")
         }
     }
 
@@ -163,7 +163,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback, LocationListe
             )
             Log.d(LOG_TAG, "The name of poi is ${poi.name}, the latlng is ${poi.latLng}, the id is ${poi.placeId}")
             poiMarker.showInfoWindow()
-            selectedPoi = poi
+            selectedLocation = SelectedLocation(poi.latLng, poi.name)
             Toast.makeText(requireContext(), "The location ${poi.name} has been chosen", Toast.LENGTH_SHORT).show()
         }
     }
@@ -271,11 +271,10 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback, LocationListe
 //------------------------------------- Default POI ------------------------------------------------
 
 
-    private fun getDefaultPOI() =
-        PointOfInterest(
-            Constants.DEFAULT_POI_LATLNG,
-            Constants.DEFAULT_POI_ID,
-            Constants.DEFAULT_POI_NAME
+    private fun getDefaultLocation() =
+        SelectedLocation(
+            Constants.DEFAULT_LOCATION_LATLNG,
+            Constants.DEFAULT_LOCATION_NAME
         )
 
 

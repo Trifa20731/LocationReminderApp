@@ -110,8 +110,8 @@ class SaveReminderFragment : BaseFragment() {
 
     private fun initSelectedPOI() {
         val args = SaveReminderFragmentArgs.fromBundle(requireArguments())
-        args.selectedPOI?.let {
-            _viewModel.onInitPOI(it)
+        args.selectedLocation?.let {
+            _viewModel.onInitSelectedLocation(it)
         }?:let {
             _viewModel.showToast.postValue(getString(R.string.toast_no_poi_chosen))
         }

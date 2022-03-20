@@ -27,8 +27,8 @@
             android:id="@+id/action_saveReminderFragment_to_selectLocationFragment"
             app:destination="@id/selectLocationFragment" />
         <argument
-            android:name="selectedPOI"
-            app:argType="com.google.android.gms.maps.model.PointOfInterest"
+            android:name="selectedLocation"
+            app:argType="com.udacity.project4.locationreminders.savereminder.selectreminderlocation.SelectedLocation"
             app:nullable="true"
             android:defaultValue="@null" />
     </fragment>

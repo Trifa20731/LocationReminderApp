@@ -1,10 +1,8 @@
 package com.udacity.project4
 
 import android.app.Application
-import androidx.fragment.app.testing.FragmentScenario.launch
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
-import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.replaceText
@@ -107,7 +105,7 @@ class RemindersActivityTest :
         onView(withId(R.id.save_poi_btn)).perform(click())
 
         // Check the location, Enter the information in the save reminder fragment.
-        onView(withText(Constants.DEFAULT_POI_NAME)).check(matches(isDisplayed()))
+        onView(withText(Constants.DEFAULT_LOCATION_NAME)).check(matches(isDisplayed()))
         onView(withId(R.id.reminderTitle)).perform(replaceText(Constants.DEFAULT_TITLE))
         onView(withId(R.id.reminderDescription)).perform(replaceText(Constants.DEFAULT_DESCRIPTION))
         onView(withId(R.id.saveReminder)).perform(click())
@@ -115,7 +113,7 @@ class RemindersActivityTest :
         // Make sure the activity is closed before resetting the db.
         onView(withText(Constants.DEFAULT_TITLE)).check(matches(isDisplayed()))
         onView(withText(Constants.DEFAULT_DESCRIPTION)).check(matches(isDisplayed()))
-        onView(withText(Constants.DEFAULT_POI_NAME)).check(matches(isDisplayed()))
+        onView(withText(Constants.DEFAULT_LOCATION_NAME)).check(matches(isDisplayed()))
 
         activityScenario.close()
 

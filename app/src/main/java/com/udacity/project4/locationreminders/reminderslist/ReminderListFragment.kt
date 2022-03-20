@@ -167,7 +167,6 @@ class ReminderListFragment : BaseFragment() {
         Log.d(SaveReminderFragment.LOG_TAG, "checkPermissionsAndStartGeoFencing: run")
         if (foregroundAndBackgroundLocationPermissionApproved()) {
             Log.d(SaveReminderFragment.LOG_TAG,"Permission Granted.")
-            Toast.makeText(requireContext(), "Permission Granted.", Toast.LENGTH_SHORT).show()
         } else {
             Log.d(SaveReminderFragment.LOG_TAG,"Permission Deny.")
             requestForegroundAndBackgroundLocationPermissions()

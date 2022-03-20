@@ -1,7 +1,6 @@
 package com.udacity.project4.locationreminders.savereminder
 
 import android.app.Application
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.PointOfInterest
@@ -11,6 +10,7 @@ import com.udacity.project4.base.NavigationCommand
 import com.udacity.project4.locationreminders.data.ReminderDataSource
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import com.udacity.project4.locationreminders.reminderslist.ReminderDataItem
+import com.udacity.project4.locationreminders.savereminder.selectreminderlocation.SelectedLocation
 import kotlinx.coroutines.launch
 
 class SaveReminderViewModel(val app: Application, val dataSource: ReminderDataSource) :
@@ -18,7 +18,7 @@ class SaveReminderViewModel(val app: Application, val dataSource: ReminderDataSo
     val reminderTitle = MutableLiveData<String>()
     val reminderDescription = MutableLiveData<String>()
     val reminderSelectedLocationStr = MutableLiveData<String>()
-    val selectedPOI = MutableLiveData<PointOfInterest>()
+    val selectedLocation = MutableLiveData<SelectedLocation>()
     val latitude = MutableLiveData<Double>()
     val longitude = MutableLiveData<Double>()
 
@@ -29,7 +29,7 @@ class SaveReminderViewModel(val app: Application, val dataSource: ReminderDataSo
         reminderTitle.value = null
         reminderDescription.value = null
         reminderSelectedLocationStr.value = null
-        selectedPOI.value = null
+        selectedLocation.value = null
         latitude.value = null
         longitude.value = null
     }
@@ -37,11 +37,11 @@ class SaveReminderViewModel(val app: Application, val dataSource: ReminderDataSo
     /**
      * Init the selected POI information.
      * */
-    fun onInitPOI(poi: PointOfInterest) {
-        selectedPOI.value = poi
-        reminderSelectedLocationStr.value = poi.name
-        latitude.value = poi.latLng.latitude
-        longitude.value = poi.latLng.longitude
+    fun onInitSelectedLocation(location: SelectedLocation) {
+        selectedLocation.value = location
+        reminderSelectedLocationStr.value = location.name
+        latitude.value = location.latLng.latitude
+        longitude.value = location.latLng.longitude
     }
 
     /**
