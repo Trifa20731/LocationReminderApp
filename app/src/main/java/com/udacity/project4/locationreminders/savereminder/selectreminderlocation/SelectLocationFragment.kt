@@ -2,8 +2,12 @@ package com.udacity.project4.locationreminders.savereminder.selectreminderlocati
 
 
 import android.Manifest
+import android.content.Context.LOCATION_SERVICE
 import android.content.pm.PackageManager
 import android.content.res.Resources
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -34,7 +38,7 @@ import java.util.*
  * call this function after the user confirms on the selected location
  * */
 
-class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
+class SelectLocationFragment : BaseFragment(), OnMapReadyCallback, LocationListener {
 
     companion object {
         const val LOG_TAG: String = "SelectLocationFragment"
@@ -43,6 +47,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     //Google Mapp
     private lateinit var mMap: GoogleMap
     private var selectedPoi: PointOfInterest? = null
+    private lateinit var locationManager: LocationManager
 
     //Use Koin to get the view model of the SaveReminder
     override val _viewModel: SaveReminderViewModel by inject()
@@ -67,8 +72,12 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        locationManager = context?.getSystemService(LOCATION_SERVICE) as LocationManager
+    }
 
-//------------------------------------- Click Functions --------------------------------------------
+    //------------------------------------- Click Functions --------------------------------------------
 
 
     private fun setClickListeners() {
@@ -97,18 +106,22 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         Log.i(LOG_TAG, "onMapReady: Run.")
         mMap = googleMap
 
-        setMapZoomInHongKong()
+
         setMapLongClick(mMap)
         setMapPOIClick(mMap)
         setMapStyle(mMap)
         enableMyLocation()
+        setMapZoomInMyLocation(mMap)
     }
 
     /** Set the initial location to Hong Kong. */
-    private fun setMapZoomInHongKong() {
-        val homeLatLng = Constants.HONG_KONG_LATLNG
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(homeLatLng, Constants.ZOOM_LEVEL))
-        mMap.addMarker(MarkerOptions().position(homeLatLng))
+    private fun setMapZoomInMyLocation(map:GoogleMap) {
+        try {
+            // Request location updates
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0L, 0f, this)
+        } catch(ex: SecurityException) {
+            Log.d("myTag", "Security Exception, no location available")
+        }
     }
 
     /**
@@ -264,6 +277,19 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
             Constants.DEFAULT_POI_ID,
             Constants.DEFAULT_POI_NAME
         )
+
+
+//------------------------------------- Location Listener Override Functions -----------------------
+
+
+    override fun onLocationChanged(location: Location) {
+        mMap.animateCamera(
+            CameraUpdateFactory.newLatLngZoom(
+                LatLng(location.latitude, location.longitude),
+                Constants.ZOOM_LEVEL
+            )
+        )
+    }
 
 
 }
