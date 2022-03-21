@@ -20,13 +20,13 @@ class RemindersListViewModel(
     val remindersList = MutableLiveData<List<ReminderDataItem>>()
 
     // Comment this part to do view model test.
-    val authenticationState = FirebaseUserLiveData().map { user ->
-        if (user != null ) {
-            AuthenticationState.AUTHENTICATED
-        } else {
-            AuthenticationState.UNAUTHENTICATED
-        }
-    }
+//    val authenticationState = FirebaseUserLiveData().map { user ->
+//        if (user != null ) {
+//            AuthenticationState.AUTHENTICATED
+//        } else {
+//            AuthenticationState.UNAUTHENTICATED
+//        }
+//    }
 
     /**
      * Get all the reminders from the DataSource and add them to the remindersList to be shown on the UI,

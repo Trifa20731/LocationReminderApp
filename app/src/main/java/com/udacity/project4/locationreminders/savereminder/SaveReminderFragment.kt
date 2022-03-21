@@ -45,6 +45,7 @@ import com.udacity.project4.locationreminders.reminderslist.ReminderDataItem
 import com.udacity.project4.utils.Constants
 import com.udacity.project4.utils.setDisplayHomeAsUpEnabled
 import org.koin.android.ext.android.inject
+import java.lang.Exception
 
 class SaveReminderFragment : BaseFragment() {
     companion object {
@@ -91,9 +92,6 @@ class SaveReminderFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = this
-
-        requestForegroundAndBackgroundLocationPermissions()
-
         initClickListener()
         geofencingClient = LocationServices.getGeofencingClient(requireActivity())
     }
@@ -112,10 +110,7 @@ class SaveReminderFragment : BaseFragment() {
         val args = SaveReminderFragmentArgs.fromBundle(requireArguments())
         args.selectedLocation?.let {
             _viewModel.onInitSelectedLocation(it)
-        }?:let {
-            _viewModel.showToast.postValue(getString(R.string.toast_no_poi_chosen))
         }
-
     }
 
     private fun initClickListener() {
@@ -164,29 +159,19 @@ class SaveReminderFragment : BaseFragment() {
             .addGeofence(geofence)
             .build()
 
-        // First, remove any existing geofences that use our pending intent
-        geofencingClient.removeGeofences(geofencePendingIntent)?.run {
-            // Regardless of success/failure of the removal, add the new geofence
-            addOnCompleteListener {
-                // Add the new geofence request with the new geofence
-                geofencingClient.addGeofences(geofencingRequest, geofencePendingIntent)?.run {
-                    addOnSuccessListener {
-                        _viewModel.showToast.postValue(getString(R.string.geofence_entered))
-                        _viewModel.saveReminder(mReminderDataItem)
-                        _viewModel.navigationCommand.value = NavigationCommand.To(SaveReminderFragmentDirections.actionSaveReminderFragmentToReminderListFragment())
-                        Log.d(LOG_TAG, "Add the geofencing successful.")
-                    }
-                    addOnFailureListener {
-                        // Failed to add geofences.
-                        _viewModel.showToast.postValue(getString(R.string.geofences_not_added))
-                        if ((it.message != null)) {
-                            Log.w(LOG_TAG, it)
-                        }
-                        Log.d(LOG_TAG, "Failure to add the geofencing.")
-                    }
-                }
+        // Save the geofence
+        try {
+            _viewModel.saveReminder(mReminderDataItem)
+            Log.d(LOG_TAG, "Add the geofencing successful.")
+        } catch (e: Exception) {
+            // Failed to add geofences.
+            _viewModel.showToast.postValue(getString(R.string.geofences_not_added))
+            if ((e.message != null)) {
+                Log.w(LOG_TAG, e)
             }
+            Log.d(LOG_TAG, "Failure to add the geofencing.")
         }
+
     }
 
     /**
@@ -222,8 +207,15 @@ class SaveReminderFragment : BaseFragment() {
             Log.d(LOG_TAG, "Failure Listener: Triggered.")
             if (exception is ResolvableApiException && resolve){
                 try {
-                    exception.startResolutionForResult(requireActivity(),
-                        Constants.REQUEST_TURN_DEVICE_LOCATION_ON)
+                    this.startIntentSenderForResult(
+                        exception.resolution.intentSender,
+                        Constants.REQUEST_TURN_DEVICE_LOCATION_ON,
+                        null,
+                        0,
+                        0,
+                        0,
+                        null
+                    )
                 } catch (sendEx: IntentSender.SendIntentException) {
                     Log.d(LOG_TAG, "Error getting location settings resolution: " + sendEx.message)
                 }
@@ -309,9 +301,7 @@ class SaveReminderFragment : BaseFragment() {
             }
             else -> Constants.REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE
         }
-
-        ActivityCompat.requestPermissions(
-            requireActivity(),
+        requestPermissions(
             permissionsArray,
             resultCode
         )
@@ -345,7 +335,7 @@ class SaveReminderFragment : BaseFragment() {
                     })
                 }.show()
         } else {
-            checkDeviceLocationSettingsAndStartGeofence()
+            checkPermissionsAndStartGeofencing()
         }
     }
 

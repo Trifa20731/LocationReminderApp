@@ -12,7 +12,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.Toast
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -110,7 +109,6 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback, LocationListe
         setMapPOIClick(mMap)
         setMapStyle(mMap)
         enableMyLocation()
-        setMapZoomInMyLocation()
     }
 
     /** Set the initial location to Hong Kong. */
@@ -237,10 +235,10 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback, LocationListe
         if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) === PackageManager.PERMISSION_GRANTED) {
             _viewModel.showToast.postValue(getString(R.string.location_jump_to_current))
             mMap.isMyLocationEnabled = true
+            setMapZoomInMyLocation()
         }
         else {
-            ActivityCompat.requestPermissions(
-                requireActivity(),
+            requestPermissions(
                 arrayOf<String>(Manifest.permission.ACCESS_FINE_LOCATION),
                 Constants.REQUEST_LOCATION_PERMISSION
             )
