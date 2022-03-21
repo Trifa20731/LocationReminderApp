@@ -81,10 +81,10 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback, LocationListe
     private fun setClickListeners() {
         binding.savePoiBtn.setOnClickListener {
             selectedLocation?.let {
-                _viewModel.showToast.postValue(getString(R.string.toast_info_save_success))
+                //_viewModel.showToast.postValue(getString(R.string.toast_info_save_success))
                 onLocationSelected(it)
             }?:let{
-                _viewModel.showToast.postValue(getString(R.string.toast_using_default_poi))
+                //_viewModel.showToast.postValue(getString(R.string.toast_using_default_poi))
                 onLocationSelected(getDefaultLocation())
             }
         }
@@ -233,7 +233,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback, LocationListe
      * */
     private fun enableMyLocation() {
         if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) === PackageManager.PERMISSION_GRANTED) {
-            _viewModel.showToast.postValue(getString(R.string.location_jump_to_current))
+            //_viewModel.showToast.postValue(getString(R.string.location_jump_to_current))
             mMap.isMyLocationEnabled = true
             setMapZoomInMyLocation()
         }

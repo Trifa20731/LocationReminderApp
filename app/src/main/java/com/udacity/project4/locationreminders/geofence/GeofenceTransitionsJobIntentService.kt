@@ -70,6 +70,7 @@ class GeofenceTransitionsJobIntentService : JobIntentService(), CoroutineScope {
     private fun sendNotification(triggeringGeofences: List<Geofence>) {
         Log.d(LOG_TAG, "Send Geofencing Notification: run")
         for (geofence in triggeringGeofences) {
+
             val requestId = geofence.requestId
             //Get the local repository instance
             val remindersLocalRepository: ReminderDataSource by inject()
@@ -92,6 +93,7 @@ class GeofenceTransitionsJobIntentService : JobIntentService(), CoroutineScope {
                     )
                 }
             }
+
         }
 
 
