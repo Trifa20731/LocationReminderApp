@@ -3,6 +3,8 @@ package com.udacity.project4.locationreminders.savereminder.selectreminderlocati
 
 import android.Manifest
 import android.content.Context.LOCATION_SERVICE
+import android.content.Intent
+import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.location.Location
@@ -14,15 +16,21 @@ import android.view.*
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import com.google.android.gms.common.api.ResolvableApiException
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
+import com.google.android.material.snackbar.Snackbar
 import com.udacity.project4.R
 import com.udacity.project4.base.BaseFragment
 import com.udacity.project4.base.NavigationCommand
 import com.udacity.project4.databinding.FragmentSelectLocationBinding
+import com.udacity.project4.locationreminders.savereminder.SaveReminderFragment
 import com.udacity.project4.locationreminders.savereminder.SaveReminderViewModel
 import com.udacity.project4.utils.Constants
 import com.udacity.project4.utils.setDisplayHomeAsUpEnabled
@@ -290,16 +298,73 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback, LocationListe
     }
 
     override fun onProviderEnabled(provider: String) {
-        super.onProviderEnabled(provider)
         Log.d(LOG_TAG, "onProviderEnable: run.")
     }
 
     override fun onProviderDisabled(provider: String) {
-        super.onProviderDisabled(provider)
         Log.d(LOG_TAG, "onProviderDisabled: run.")
+        checkDeviceLocationSettingsAndGoToMyLocation()
     }
 
     override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
-        super.onStatusChanged(provider, status, extras)
+        Log.d(LOG_TAG, "onStatusChanged: run.")
+    }
+
+
+//------------------------------------- Location Setting -------------------------------------------
+
+
+    private fun checkDeviceLocationSettingsAndGoToMyLocation(resolve:Boolean = true) {
+        Log.d(SaveReminderFragment.LOG_TAG, "checkDeviceLocationSettingsAndStartGeofence")
+
+        // Set the request.
+        val locationRequest = LocationRequest.create().apply {
+            priority = LocationRequest.PRIORITY_LOW_POWER
+        }
+
+        // Add the geofencing tasks.
+        val builder = LocationSettingsRequest.Builder().addLocationRequest(locationRequest)
+        val settingsClient = LocationServices.getSettingsClient(requireActivity())
+        val locationSettingsResponseTask =
+            settingsClient.checkLocationSettings(builder.build())
+
+        // Failure Listener
+        locationSettingsResponseTask.addOnFailureListener { exception ->
+            if (exception is ResolvableApiException && resolve){
+                try {
+                    this.startIntentSenderForResult(
+                        exception.resolution.intentSender,
+                        Constants.REQUEST_TURN_DEVICE_LOCATION_ON,
+                        null,
+                        0,
+                        0,
+                        0,
+                        null
+                    )
+                } catch (sendEx: IntentSender.SendIntentException) {
+                    Log.d(SaveReminderFragment.LOG_TAG, "Error getting location settings resolution: " + sendEx.message)
+                }
+            } else {
+                _viewModel.showSnackBar.postValue(getString(R.string.location_required_error))
+                Snackbar.make(
+                    binding.selectLocationFragmentFl,
+                    R.string.location_required_error, Snackbar.LENGTH_INDEFINITE
+                ).setAction(android.R.string.ok) {
+                    checkDeviceLocationSettingsAndGoToMyLocation()
+                }.show()
+            }
+        }
+        locationSettingsResponseTask.addOnCompleteListener {
+            if ( it.isSuccessful ) {
+                enableMyLocation()
+            }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == Constants.REQUEST_TURN_DEVICE_LOCATION_ON) {
+            checkDeviceLocationSettingsAndGoToMyLocation(false)
+        }
     }
 }
