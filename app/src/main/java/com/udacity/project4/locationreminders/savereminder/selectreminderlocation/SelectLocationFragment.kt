@@ -104,7 +104,6 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback, LocationListe
         Log.i(LOG_TAG, "onMapReady: Run.")
         mMap = googleMap
 
-
         setMapLongClick(mMap)
         setMapPOIClick(mMap)
         setMapStyle(mMap)
@@ -232,6 +231,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback, LocationListe
      * Enable the current Location. If the permission deny, require for location permission.
      * */
     private fun enableMyLocation() {
+        Log.d(LOG_TAG, "enableMyLocation: Run.")
         if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) === PackageManager.PERMISSION_GRANTED) {
             //_viewModel.showToast.postValue(getString(R.string.location_jump_to_current))
             mMap.isMyLocationEnabled = true
@@ -280,6 +280,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback, LocationListe
 
 
     override fun onLocationChanged(location: Location) {
+        Log.d(LOG_TAG, "onLocationChanged: Run.")
         mMap.animateCamera(
             CameraUpdateFactory.newLatLngZoom(
                 LatLng(location.latitude, location.longitude),
@@ -288,5 +289,17 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback, LocationListe
         )
     }
 
+    override fun onProviderEnabled(provider: String) {
+        super.onProviderEnabled(provider)
+        Log.d(LOG_TAG, "onProviderEnable: run.")
+    }
 
+    override fun onProviderDisabled(provider: String) {
+        super.onProviderDisabled(provider)
+        Log.d(LOG_TAG, "onProviderDisabled: run.")
+    }
+
+    override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
+        super.onStatusChanged(provider, status, extras)
+    }
 }

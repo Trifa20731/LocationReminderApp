@@ -160,18 +160,23 @@ class SaveReminderFragment : BaseFragment() {
             .build()
 
         // Save the geofence
-        try {
-            _viewModel.saveReminder(mReminderDataItem)
-            Log.d(LOG_TAG, "Add the geofencing successful.")
-        } catch (e: Exception) {
-            // Failed to add geofences.
-            _viewModel.showToast.postValue(getString(R.string.geofences_not_added))
-            if ((e.message != null)) {
-                Log.w(LOG_TAG, e)
+        // Add the new geofence request with the new geofence
+        geofencingClient.addGeofences(geofencingRequest, geofencePendingIntent)?.run {
+            addOnSuccessListener {
+                //_viewModel.showToast.postValue(getString(R.string.geofence_entered))
+                _viewModel.saveReminder(mReminderDataItem)
+                _viewModel.navigationCommand.value = NavigationCommand.To(SaveReminderFragmentDirections.actionSaveReminderFragmentToReminderListFragment())
+                Log.d(LOG_TAG, "Add the geofencing successful.")
             }
-            Log.d(LOG_TAG, "Failure to add the geofencing.")
+            addOnFailureListener {
+                // Failed to add geofences.
+                //_viewModel.showToast.postValue(getString(R.string.geofences_not_added))
+                if ((it.message != null)) {
+                    Log.w(LOG_TAG, it)
+                }
+                Log.d(LOG_TAG, "Failure to add the geofencing.")
+            }
         }
-
     }
 
     /**
